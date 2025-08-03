@@ -1,86 +1,71 @@
 import streamlit as st
 import plotly.graph_objects as go
-import datetime
 
-# Config générale
-st.set_page_config(
-    page_title="ECB Repricing Dashboard",
-    page_icon="💶",
-    layout="wide",
-    initial_sidebar_state="expanded"
-)
+# CONFIG
+st.set_page_config(page_title="ECB Rate Cut Probabilities", layout="wide")
 
-# -------------------------------
-# 🎨 CSS Custom Pro
+# STYLE CSS
 st.markdown("""
     <style>
-        body {
-            background-color: #0F1117;
-            color: #FFFFFF;
+        .main {
+            background-color: #f5f7fa;
         }
-        .block-container {
-            padding-top: 2rem;
+        header, footer {visibility: hidden;}
+        .title {
+            font-size: 2.5rem;
+            color: #1a1a1a;
+            font-weight: 600;
         }
-        .sidebar .sidebar-content {
-            background-color: #1C1F26;
+        .subtitle {
+            color: #666;
+            font-size: 1.1rem;
         }
-        h1, h2, h3 {
-            color: #4A90E2 !important;
-        }
-        .stButton>button {
-            background-color: #4A90E2;
+        .stButton button {
+            background-color: #0e1117;
             color: white;
+            font-weight: bold;
+            border-radius: 8px;
+            padding: 0.5em 1em;
         }
     </style>
 """, unsafe_allow_html=True)
 
-# -------------------------------
-# 📊 Données fictives pour le graphique
-x = ['Septembre', 'Octobre', 'Décembre']
-y = [1.9973, 1.9923, 1.9475]
+# SIDEBAR
+with st.sidebar:
+    st.title("🔧 Menu")
+    st.markdown("Utilise ce menu pour naviguer")
+    st.markdown("---")
+    st.selectbox("Choisir une Banque Centrale", ["ECB", "Fed", "BoE", "BoJ"])
+    st.selectbox("Période", ["Août", "Septembre", "Décembre"])
+    st.button("🔄 Recalculer")
+
+# HEADER
+st.markdown('<div class="title">📊 ECB Rate Cut Dashboard</div>', unsafe_allow_html=True)
+st.markdown('<div class="subtitle">Analyse des probabilités de cut via les taux implicites</div>', unsafe_allow_html=True)
+st.markdown("---")
+
+# GRAPH PLACEHOLDER
+st.subheader("Graphique interactif :")
 
 fig = go.Figure()
-fig.add_trace(go.Scatter(x=x, y=y, mode='lines+markers', name='Taux implicites BCE', line=dict(color='#4A90E2', width=3)))
-
+fig.add_trace(go.Bar(
+    x=["No Cut", "1 Cut", "2 Cuts", "3 Cuts"],
+    y=[35, 40, 20, 5],
+    marker_color=['#636EFA', '#EF553B', '#00CC96', '#AB63FA']
+))
 fig.update_layout(
-    title="Repricing BCE par échéance",
-    xaxis_title="Réunions",
-    yaxis_title="Taux Implicites",
-    template="plotly_dark",
-    paper_bgcolor="#0F1117",
-    plot_bgcolor="#0F1117",
-    font=dict(color="white")
+    title="Probabilités intégrées par les marchés (Décembre)",
+    xaxis_title="Scénarios",
+    yaxis_title="Probabilité (%)",
+    template="plotly_white",
+    height=500
 )
-
-# -------------------------------
-# 📋 SIDEBAR - Infos contextuelles
-st.sidebar.image("https://upload.wikimedia.org/wikipedia/commons/5/5e/ECB_logo.svg", width=150)
-st.sidebar.markdown("### Dashboard BCE")
-st.sidebar.write("Ce tableau suit le **repricing implicite** sur les futures de la Banque Centrale Européenne.")
-
-with st.sidebar.expander("ℹ️ À propos"):
-    st.write("""
-    Créé par Evan E.
-    - Données macro simulées
-    - Affichage professionnel
-    - Prochainement : intégration réelle via API STIR ou futures EUREX
-    """)
-
-# -------------------------------
-# 📈 Affichage principal
-st.title("📊 ECB Repricing Dashboard")
-st.markdown("#### Taux implicites par réunion monétaire (calculés depuis les futures)")
 
 st.plotly_chart(fig, use_container_width=True)
 
-# -------------------------------
-# 📰 Bloc Data économique récente
-st.markdown("### Dernières publications macro 📅")
-st.info("🇪🇺 Inflation Core : 2.9% (en baisse)\n\n🇩🇪 PMI Manufacturier : 42.3 (faible)\n\n🇫🇷 Taux de chômage : 7.1%")
-
-# -------------------------------
-# 📆 Footer
+# FOOTER
 st.markdown("---")
-col1, col2, col3 = st.columns([1,2,1])
-with col2:
-    st.markdown("<p style='text-align:center;'>Fait avec ❤️ par Evan — 2025 | <a style='color:#4A90E2;' href='https://github.com/tonrepo'>GitHub</a></p>", unsafe_allow_html=True)
+st.markdown(
+    "<center><small>© 2025 ECB Tracker | Made with ❤️ by Evan</small></center>",
+    unsafe_allow_html=True
+)
